@@ -162,6 +162,7 @@ createButton("Dark Spawner", function()
 end)
 
 --// Footer
+local Footer = Instance.new("TextLabel")
 Footer.Parent = MainFrame
 Footer.Size = UDim2.new(1,0,0,30)
 Footer.BackgroundTransparency = 1
