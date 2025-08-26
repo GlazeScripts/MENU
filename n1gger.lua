@@ -17,7 +17,6 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Name = "ZysumeHubUI"
 
 --// Toggle Button (Circle)
-ToggleButton.Parent = ScreenGui
 ToggleButton.Size = UDim2.new(0, 70, 0, 70)
 ToggleButton.Position = UDim2.new(0, 20, 0.5, -35)
 ToggleButton.Text = "Glaze\nScripts"
@@ -205,6 +204,138 @@ ToggleButton.MouseButton1Click:Connect(function()
 		end)
 	end
 end)
+
+--// Services
+local TweenService = game:GetService("TweenService")
+
+--// ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
+ScreenGui.Name = "ZysumeHubUI"
+ScreenGui.ResetOnSpawn = false
+
+--// Toggle Button (created but not parented yet)
+local ToggleButton = Instance.new("TextButton")
+ToggleButton.Size = UDim2.new(0, 70, 0, 70)
+ToggleButton.Position = UDim2.new(0, 20, 0.5, -35)
+ToggleButton.Text = "Glaze\nScripts"
+ToggleButton.TextColor3 = Color3.fromRGB(255,255,255)
+ToggleButton.TextStrokeTransparency = 0
+ToggleButton.TextStrokeColor3 = Color3.fromRGB(100,100,100)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(30,30,30)
+ToggleButton.TextSize = 14
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.AutoButtonColor = true
+ToggleButton.Active = true
+ToggleButton.Draggable = true
+ToggleButton.Visible = false
+ToggleButton.BackgroundTransparency = 1
+ToggleButton.TextTransparency = 1
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(1,0)
+local ToggleUIStroke = Instance.new("UIStroke", ToggleButton)
+ToggleUIStroke.Color = Color3.fromRGB(255,255,255)
+ToggleUIStroke.Thickness = 1
+
+--// Main Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 220, 0, 220)
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -110)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+MainFrame.BackgroundTransparency = 0.25
+MainFrame.Visible = false
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+Instance.new("UICorner", MainFrame)
+local UIStrokeMain = Instance.new("UIStroke", MainFrame)
+UIStrokeMain.Color = Color3.fromRGB(255,255,255)
+UIStrokeMain.Thickness = 1
+
+local scale = Instance.new("UIScale", MainFrame)
+scale.Scale = 0
+
+--// IMPORTANT Pop-up
+local ImportantFrame = Instance.new("Frame")
+ImportantFrame.Size = UDim2.new(0, 360, 0, 220)
+ImportantFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+ImportantFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+ImportantFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ImportantFrame.Visible = false
+ImportantFrame.Parent = ScreenGui
+Instance.new("UICorner", ImportantFrame).CornerRadius = UDim.new(0.1, 0)
+local stroke = Instance.new("UIStroke", ImportantFrame)
+stroke.Color = Color3.fromRGB(255, 255, 255)
+stroke.Thickness = 1
+
+local ImportantTitle = Instance.new("TextLabel", ImportantFrame)
+ImportantTitle.Size = UDim2.new(1, 0, 0, 40)
+ImportantTitle.Position = UDim2.new(0, 0, 0, 10)
+ImportantTitle.BackgroundTransparency = 1
+ImportantTitle.Text = "⚠️IMPORTANT⚠️"
+ImportantTitle.TextColor3 = Color3.fromRGB(255, 255, 0)
+ImportantTitle.Font = Enum.Font.GothamBold
+ImportantTitle.TextSize = 24
+ImportantTitle.TextStrokeTransparency = 0
+ImportantTitle.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+
+local Instructions = Instance.new("TextLabel", ImportantFrame)
+Instructions.Size = UDim2.new(1, -40, 0, 120)
+Instructions.Position = UDim2.new(0, 20, 0, 60)
+Instructions.BackgroundTransparency = 1
+Instructions.Text = "To insure the script works properly\n1. Rejoin\n2. Go to delta settings\n3. Turn off verify teleport, Anti Scam, Anti Afk\n4. Execute the script again\n5. You're all set!"
+Instructions.TextColor3 = Color3.fromRGB(200, 200, 200)
+Instructions.Font = Enum.Font.Gotham
+Instructions.TextSize = 16
+Instructions.TextWrapped = true
+Instructions.TextYAlignment = Enum.TextYAlignment.Top
+
+local GotItButton = Instance.new("TextButton", ImportantFrame)
+GotItButton.Size = UDim2.new(0, 120, 0, 40)
+GotItButton.Position = UDim2.new(0.5, -60, 1, -50)
+GotItButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+GotItButton.Text = "Got it!"
+GotItButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+GotItButton.Font = Enum.Font.GothamBold
+GotItButton.TextSize = 18
+Instance.new("UICorner", GotItButton).CornerRadius = UDim.new(0.2, 0)
+
+--// Got it Button Logic
+GotItButton.MouseButton1Click:Connect(function()
+    ImportantFrame.Visible = false
+
+    MainFrame.Visible = true
+    scale.Scale = 0
+    MainFrame.BackgroundTransparency = 1
+
+    TweenService:Create(scale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Scale = 1
+    }):Play()
+
+    TweenService:Create(MainFrame, TweenInfo.new(0.4), {
+        BackgroundTransparency = 0.25
+    }):Play()
+
+    ToggleButton.Parent = ScreenGui
+    ToggleButton.Visible = true
+    ToggleButton.Size = UDim2.new(0, 0, 0, 0)
+    TweenService:Create(ToggleButton, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 70, 0, 70),
+        BackgroundTransparency = 0,
+        TextTransparency = 0
+    }):Play()
+end)
+
+--// Loading Screen Setup
+-- (Paste your full loading screen code here, exactly as you had it)
+-- Just make sure that inside fadeTween.Completed you replace the menu reveal with:
+-- ImportantFrame.Visible = true
+
+-- Example:
+-- fadeTween.Completed:Connect(function()
+--     LoadingGui:Destroy()
+--     ImportantFrame.Visible = true
+-- end)
+
 --// Loading Screen Setup
 local TweenService = game:GetService("TweenService")
 local LoadingGui = Instance.new("ScreenGui")
@@ -379,27 +510,6 @@ task.delay(9, function()
 
     fadeTween.Completed:Connect(function()
         LoadingGui:Destroy()
-
-        -- Show menu
-        MainFrame.Visible = true
-        scale.Scale = 0
-        MainFrame.BackgroundTransparency = 1
-
-        TweenService:Create(scale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Scale = 1
-        }):Play()
-
-        TweenService:Create(MainFrame, TweenInfo.new(0.4), {
-            BackgroundTransparency = 0.25
-        }):Play()
-
-        -- Show toggle button with bounce
-        ToggleButton.Visible = true
-        ToggleButton.Size = UDim2.new(0, 0, 0, 0)
-        TweenService:Create(ToggleButton, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Size = UDim2.new(0, 70, 0, 70),
-            BackgroundTransparency = 0,
-            TextTransparency = 0
-        }):Play()
+        ImportantFrame.Visible = true
     end)
 end)
