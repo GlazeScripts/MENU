@@ -1,153 +1,120 @@
---// UI Variables
+--// Services
 local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
+
+--// Root ScreenGui
 local ScreenGui = Instance.new("ScreenGui")
-local ToggleButton = Instance.new("TextButton")
-local MainFrame = Instance.new("Frame")
-local UICornerMain = Instance.new("UICorner")
-local Title = Instance.new("TextLabel")
-local UIStrokeMain = Instance.new("UIStroke")
-local UIListLayout = Instance.new("UIListLayout")
-local Footer = Instance.new("TextLabel")
-local ToggleUICorner = Instance.new("UICorner")
-local ToggleUIStroke = Instance.new("UIStroke")
-
---// Enable GUI
-ScreenGui.Parent = game.CoreGui
-ScreenGui.ResetOnSpawn = false
 ScreenGui.Name = "ZysumeHubUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game.CoreGui
 
---// Toggle Button (Circle)
+--// Toggle Button
+local ToggleButton = Instance.new("TextButton")
 ToggleButton.Size = UDim2.new(0, 70, 0, 70)
 ToggleButton.Position = UDim2.new(0, 20, 0.5, -35)
 ToggleButton.Text = "Glaze\nScripts"
-ToggleButton.TextColor3 = Color3.fromRGB(255,255,255)
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleButton.TextStrokeTransparency = 0
-ToggleButton.TextStrokeColor3 = Color3.fromRGB(100,100,100)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(30,30,30)
+ToggleButton.TextStrokeColor3 = Color3.fromRGB(100, 100, 100)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 ToggleButton.TextSize = 14
 ToggleButton.Font = Enum.Font.GothamBold
 ToggleButton.AutoButtonColor = true
 ToggleButton.Active = true
 ToggleButton.Draggable = true
-
-ToggleUICorner.Parent = ToggleButton
-ToggleUICorner.CornerRadius = UDim.new(1,0)
-ToggleUIStroke.Parent = ToggleButton
-ToggleUIStroke.Color = Color3.fromRGB(255,255,255)
+ToggleButton.Visible = false
+ToggleButton.BackgroundTransparency = 1
+ToggleButton.TextTransparency = 1
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(1, 0)
+local ToggleUIStroke = Instance.new("UIStroke", ToggleButton)
+ToggleUIStroke.Color = Color3.fromRGB(255, 255, 255)
 ToggleUIStroke.Thickness = 1
-ToggleUIStroke.Transparency = 0 -- fully visible
-ToggleUIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
---// Toggle Button Text Fade Animation
-task.spawn(function()
-	local colors = {
-		Color3.fromRGB(255, 255, 255),
-		Color3.fromRGB(150, 150, 150),
-		Color3.fromRGB(0, 0, 0)
-	}
-	while true do
-		for _, targetColor in ipairs(colors) do
-			local tween = TweenService:Create(ToggleButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
-				TextColor3 = targetColor
-			})
-			tween:Play()
-			task.wait(0.6)
-		end
-	end
-end)
-
---// Main Frame
-MainFrame.Parent = ScreenGui
-MainFrame.Size = UDim2.new(0, 220, 0, 220)
-MainFrame.Position = UDim2.new(0.5, -110, 0.5, -110)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
+--// Main Menu Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 220, 0, 260)
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -130)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.BackgroundTransparency = 0.25
 MainFrame.Visible = false
 MainFrame.Active = true
 MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
 
-UICornerMain.Parent = MainFrame
-UIStrokeMain.Parent = MainFrame
-UIStrokeMain.Color = Color3.fromRGB(255,255,255)
+Instance.new("UICorner", MainFrame)
+local UIStrokeMain = Instance.new("UIStroke", MainFrame)
+UIStrokeMain.Color = Color3.fromRGB(255, 255, 255)
 UIStrokeMain.Thickness = 1
 
---// UIScale for shrink animation
-local scale = Instance.new("UIScale")
-scale.Parent = MainFrame
+local scale = Instance.new("UIScale", MainFrame)
 scale.Scale = 0
 
---// Title
-Title.Parent = MainFrame
-Title.Size = UDim2.new(1,0,0,40)
+-- Title
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 40)
 Title.BackgroundTransparency = 1
 Title.Text = "Glaze Hub Menu"
-Title.TextColor3 = Color3.fromRGB(255,255,255)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextStrokeTransparency = 0
-Title.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+Title.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
 Title.TextSize = 22
 Title.Font = Enum.Font.GothamBold
 Title.LayoutOrder = 0
 
---// Layout
-UIListLayout.Parent = MainFrame
-UIListLayout.Padding = UDim.new(0,10)
+-- Layout
+local UIListLayout = Instance.new("UIListLayout", MainFrame)
+UIListLayout.Padding = UDim.new(0, 10)
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Top
 UIListLayout.FillDirection = Enum.FillDirection.Vertical
 
---// Button Creator with Animation
+-- Button creator with animation
 local function createButton(text, callback)
-	local btn = Instance.new("TextButton")
-	btn.Parent = MainFrame
-	btn.Size = UDim2.new(0.85, 0, 0, 35)
-	btn.BackgroundColor3 = Color3.fromRGB(40,40,40)
-	btn.TextColor3 = Color3.fromRGB(255,255,255)
-	btn.TextSize = 16
-	btn.Font = Enum.Font.GothamBold
-	btn.Text = text
-	btn.AutoButtonColor = true
+    local btn = Instance.new("TextButton")
+    btn.Parent = MainFrame
+    btn.Size = UDim2.new(0.85, 0, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.TextSize = 16
+    btn.Font = Enum.Font.GothamBold
+    btn.Text = text
+    btn.AutoButtonColor = true
+    btn.LayoutOrder = 10
 
-	local stroke = Instance.new("UIStroke")
-	stroke.Parent = btn
-	stroke.Color = Color3.fromRGB(255,255,255)
-	stroke.Thickness = 1
+    Instance.new("UICorner", btn)
+    local stroke = Instance.new("UIStroke", btn)
+    stroke.Color = Color3.fromRGB(255, 255, 255)
+    stroke.Thickness = 1
 
-	local corner = Instance.new("UICorner")
-	corner.Parent = btn
+    btn.MouseButton1Click:Connect(function()
+        local particle = Instance.new("ParticleEmitter")
+        particle.Texture = "rbxassetid://241837157"
+        particle.Lifetime = NumberRange.new(0.3)
+        particle.Rate = 100
+        particle.Speed = NumberRange.new(2)
+        particle.SpreadAngle = Vector2.new(360, 360)
+        particle.Parent = btn
+        particle:Emit(20)
+        Debris:AddItem(particle, 0.5)
 
-	btn.MouseButton1Click:Connect(function()
-		-- Particle effect
-		local particle = Instance.new("ParticleEmitter")
-		particle.Texture = "rbxassetid://241837157"
-		particle.Lifetime = NumberRange.new(0.3)
-		particle.Rate = 100
-		particle.Speed = NumberRange.new(2)
-		particle.SpreadAngle = Vector2.new(360,360)
-		particle.Parent = btn
-		particle:Emit(20)
-		game.Debris:AddItem(particle, 0.5)
+        local originalSize = btn.Size
+        TweenService:Create(btn, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset - 5, originalSize.Y.Scale, originalSize.Y.Offset - 5)
+        }):Play()
+        task.delay(0.1, function()
+            TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+                Size = originalSize
+            }):Play()
+        end)
 
-		-- Shrink + bounce animation
-		local originalSize = btn.Size
-		local shrinkTween = TweenService:Create(btn, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-			Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset - 5, originalSize.Y.Scale, originalSize.Y.Offset - 5)
-		})
-		shrinkTween:Play()
-		shrinkTween.Completed:Connect(function()
-			local bounceTween = TweenService:Create(btn, TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-				Size = originalSize
-			})
-			bounceTween:Play()
-		end)
-
-		if callback then
-			callback()
-		end
-	end)
+        if callback then
+            task.spawn(callback)
+        end
+    end)
 end
 
---// Buttons
+-- Buttons
 createButton("Zysume Hub", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/ZusumeHub/ZusumeHub/refs/heads/main/UpdateZysume"))()
 end)
@@ -158,116 +125,37 @@ end)
 
 createButton("Dark Spawner", function()
     local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
-    Spawner.Load()
+    if Spawner and Spawner.Load then
+        Spawner.Load()
+    end
 end)
 
---// Footer
+-- Footer
 local Footer = Instance.new("TextLabel")
 Footer.Parent = MainFrame
-Footer.Size = UDim2.new(1,0,0,30)
+Footer.Size = UDim2.new(1, 0, 0, 30)
 Footer.BackgroundTransparency = 1
 Footer.Text = "Made by GlazeOnTop"
-Footer.TextColor3 = Color3.fromRGB(255,255,255)
+Footer.TextColor3 = Color3.fromRGB(255, 255, 255)
 Footer.TextSize = 14
 Footer.Font = Enum.Font.Gotham
 Footer.LayoutOrder = 999
 
---// Toggle Animation (True Shrink In/Out)
-local isOpen = false
-ToggleButton.MouseButton1Click:Connect(function()
-	isOpen = not isOpen
-
-	if isOpen then
-		MainFrame.Visible = true
-		scale.Scale = 0
-		MainFrame.BackgroundTransparency = 1
-
-		TweenService:Create(scale, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-			Scale = 1
-		}):Play()
-
-		TweenService:Create(MainFrame, TweenInfo.new(0.4), {
-			BackgroundTransparency = 0.25
-		}):Play()
-	else
-		local shrinkTween = TweenService:Create(scale, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-			Scale = 0
-		})
-		local fadeTween = TweenService:Create(MainFrame, TweenInfo.new(0.3), {
-			BackgroundTransparency = 1
-		})
-
-		shrinkTween:Play()
-		fadeTween:Play()
-
-		shrinkTween.Completed:Connect(function()
-			MainFrame.Visible = false
-		end)
-	end
-end)
-
---// Services
-local TweenService = game:GetService("TweenService")
-
---// ScreenGui
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = game.CoreGui
-ScreenGui.Name = "ZysumeHubUI"
-ScreenGui.ResetOnSpawn = false
-
---// Toggle Button (created but not parented yet)
-local ToggleButton = Instance.new("TextButton")
-ToggleButton.Size = UDim2.new(0, 70, 0, 70)
-ToggleButton.Position = UDim2.new(0, 20, 0.5, -35)
-ToggleButton.Text = "Glaze\nScripts"
-ToggleButton.TextColor3 = Color3.fromRGB(255,255,255)
-ToggleButton.TextStrokeTransparency = 0
-ToggleButton.TextStrokeColor3 = Color3.fromRGB(100,100,100)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(30,30,30)
-ToggleButton.TextSize = 14
-ToggleButton.Font = Enum.Font.GothamBold
-ToggleButton.AutoButtonColor = true
-ToggleButton.Active = true
-ToggleButton.Draggable = true
-ToggleButton.Visible = false
-ToggleButton.BackgroundTransparency = 1
-ToggleButton.TextTransparency = 1
-Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(1,0)
-local ToggleUIStroke = Instance.new("UIStroke", ToggleButton)
-ToggleUIStroke.Color = Color3.fromRGB(255,255,255)
-ToggleUIStroke.Thickness = 1
-
---// Main Frame
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 220, 0, 220)
-MainFrame.Position = UDim2.new(0.5, -110, 0.5, -110)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
-MainFrame.BackgroundTransparency = 0.25
-MainFrame.Visible = false
-MainFrame.Active = true
-MainFrame.Draggable = true
-MainFrame.Parent = ScreenGui
-Instance.new("UICorner", MainFrame)
-local UIStrokeMain = Instance.new("UIStroke", MainFrame)
-UIStrokeMain.Color = Color3.fromRGB(255,255,255)
-UIStrokeMain.Thickness = 1
-
-local scale = Instance.new("UIScale", MainFrame)
-scale.Scale = 0
-
 --// IMPORTANT Pop-up
 local ImportantFrame = Instance.new("Frame")
-ImportantFrame.Size = UDim2.new(0, 360, 0, 220)
+ImportantFrame.Size = UDim2.new(0, 420, 0, 260) -- Bigger size
 ImportantFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 ImportantFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 ImportantFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 ImportantFrame.Visible = false
 ImportantFrame.Parent = ScreenGui
-Instance.new("UICorner", ImportantFrame).CornerRadius = UDim.new(0.1, 0)
-local stroke = Instance.new("UIStroke", ImportantFrame)
-stroke.Color = Color3.fromRGB(255, 255, 255)
-stroke.Thickness = 1
 
+Instance.new("UICorner", ImportantFrame).CornerRadius = UDim.new(0.1, 0)
+local ImportantStroke = Instance.new("UIStroke", ImportantFrame)
+ImportantStroke.Color = Color3.fromRGB(255, 255, 255)
+ImportantStroke.Thickness = 1
+
+-- Title
 local ImportantTitle = Instance.new("TextLabel", ImportantFrame)
 ImportantTitle.Size = UDim2.new(1, 0, 0, 40)
 ImportantTitle.Position = UDim2.new(0, 0, 0, 10)
@@ -275,24 +163,27 @@ ImportantTitle.BackgroundTransparency = 1
 ImportantTitle.Text = "⚠️IMPORTANT⚠️"
 ImportantTitle.TextColor3 = Color3.fromRGB(255, 255, 0)
 ImportantTitle.Font = Enum.Font.GothamBold
-ImportantTitle.TextSize = 24
+ImportantTitle.TextSize = 26
 ImportantTitle.TextStrokeTransparency = 0
 ImportantTitle.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
 
+-- Instructions (Formatted)
 local Instructions = Instance.new("TextLabel", ImportantFrame)
-Instructions.Size = UDim2.new(1, -40, 0, 120)
+Instructions.Size = UDim2.new(1, -40, 0, 140)
 Instructions.Position = UDim2.new(0, 20, 0, 60)
 Instructions.BackgroundTransparency = 1
-Instructions.Text = "To insure the script works properly\n1. Rejoin\n2. Go to delta settings\n3. Turn off verify teleport, Anti Scam, Anti Afk\n4. Execute the script again\n5. You're all set!"
-Instructions.TextColor3 = Color3.fromRGB(200, 200, 200)
+Instructions.Text = "1. Rejoin\n2. Go to Delta settings\n3. Turn off Verify Teleport, Anti Scam, Anti AFK\n4. Execute the script again\n5. You're all set!"
+Instructions.TextColor3 = Color3.fromRGB(220, 220, 220)
 Instructions.Font = Enum.Font.Gotham
-Instructions.TextSize = 16
+Instructions.TextSize = 18
 Instructions.TextWrapped = true
 Instructions.TextYAlignment = Enum.TextYAlignment.Top
+Instructions.TextXAlignment = Enum.TextXAlignment.Left
 
+-- Got It Button
 local GotItButton = Instance.new("TextButton", ImportantFrame)
-GotItButton.Size = UDim2.new(0, 120, 0, 40)
-GotItButton.Position = UDim2.new(0.5, -60, 1, -50)
+GotItButton.Size = UDim2.new(0, 140, 0, 40)
+GotItButton.Position = UDim2.new(0.5, -70, 1, -50)
 GotItButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 GotItButton.Text = "Got it!"
 GotItButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -300,10 +191,11 @@ GotItButton.Font = Enum.Font.GothamBold
 GotItButton.TextSize = 18
 Instance.new("UICorner", GotItButton).CornerRadius = UDim.new(0.2, 0)
 
---// Got it Button Logic
+-- Got It Button Logic
 GotItButton.MouseButton1Click:Connect(function()
     ImportantFrame.Visible = false
 
+    -- Show menu
     MainFrame.Visible = true
     scale.Scale = 0
     MainFrame.BackgroundTransparency = 1
@@ -316,6 +208,7 @@ GotItButton.MouseButton1Click:Connect(function()
         BackgroundTransparency = 0.25
     }):Play()
 
+    -- Show toggle button with bounce
     ToggleButton.Parent = ScreenGui
     ToggleButton.Visible = true
     ToggleButton.Size = UDim2.new(0, 0, 0, 0)
@@ -326,41 +219,20 @@ GotItButton.MouseButton1Click:Connect(function()
     }):Play()
 end)
 
---// Loading Screen Setup
--- (Paste your full loading screen code here, exactly as you had it)
--- Just make sure that inside fadeTween.Completed you replace the menu reveal with:
--- ImportantFrame.Visible = true
-
--- Example:
--- fadeTween.Completed:Connect(function()
---     LoadingGui:Destroy()
---     ImportantFrame.Visible = true
--- end)
-
---// Loading Screen Setup
-local TweenService = game:GetService("TweenService")
+-- Loading Screen Setup
 local LoadingGui = Instance.new("ScreenGui")
-local DimOverlay = Instance.new("Frame")
-local LoadingFrame = Instance.new("Frame")
-local LoadingPrefix = Instance.new("TextLabel")
-local GlazeHubText = Instance.new("TextLabel")
-local ProgressBarBG = Instance.new("Frame")
-local ProgressBarFill = Instance.new("Frame")
-local PercentLabel = Instance.new("TextLabel")
-local SubscribeText = Instance.new("TextLabel")
-
-LoadingGui.Parent = game.CoreGui
 LoadingGui.Name = "GlazeLoading"
 LoadingGui.ResetOnSpawn = false
+LoadingGui.Parent = game.CoreGui
 
--- Dimmed background
+local DimOverlay = Instance.new("Frame")
 DimOverlay.Parent = LoadingGui
 DimOverlay.Size = UDim2.new(1, 0, 1, 0)
 DimOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 DimOverlay.BackgroundTransparency = 0.4
 DimOverlay.ZIndex = 0
 
--- Loading frame
+local LoadingFrame = Instance.new("Frame")
 LoadingFrame.Parent = LoadingGui
 LoadingFrame.Size = UDim2.new(0, 441, 0, 176)
 LoadingFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -375,8 +247,7 @@ stroke.Color = Color3.fromRGB(255, 255, 255)
 stroke.Thickness = 1
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
--- "Loading" label
-LoadingPrefix.Parent = LoadingFrame
+local LoadingPrefix = Instance.new("TextLabel", LoadingFrame)
 LoadingPrefix.Size = UDim2.new(0, 130, 0, 40)
 LoadingPrefix.Position = UDim2.new(0.5, -135, 0, 10)
 LoadingPrefix.BackgroundTransparency = 1
@@ -389,8 +260,7 @@ LoadingPrefix.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
 LoadingPrefix.TextXAlignment = Enum.TextXAlignment.Right
 LoadingPrefix.ZIndex = 2
 
--- "Glaze Hub..." label
-GlazeHubText.Parent = LoadingFrame
+local GlazeHubText = Instance.new("TextLabel", LoadingFrame)
 GlazeHubText.Size = UDim2.new(0, 180, 0, 40)
 GlazeHubText.Position = UDim2.new(0.5, 5, 0, 10)
 GlazeHubText.BackgroundTransparency = 1
@@ -420,24 +290,21 @@ task.spawn(function()
     end
 end)
 
--- Progress bar background
-ProgressBarBG.Parent = LoadingFrame
+local ProgressBarBG = Instance.new("Frame", LoadingFrame)
 ProgressBarBG.Size = UDim2.new(1, -40, 0, 40)
 ProgressBarBG.Position = UDim2.new(0, 20, 0, 70)
 ProgressBarBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 ProgressBarBG.BorderSizePixel = 0
 ProgressBarBG.ZIndex = 2
 
--- Progress bar fill
-ProgressBarFill.Parent = ProgressBarBG
+local ProgressBarFill = Instance.new("Frame", ProgressBarBG)
 ProgressBarFill.Size = UDim2.new(0, 0, 1, 0)
 ProgressBarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
 ProgressBarFill.BorderSizePixel = 0
 ProgressBarFill.ZIndex = 3
 Instance.new("UICorner", ProgressBarFill).CornerRadius = UDim.new(0.5, 0)
 
--- Percentage label
-PercentLabel.Parent = ProgressBarBG
+local PercentLabel = Instance.new("TextLabel", ProgressBarBG)
 PercentLabel.Size = UDim2.new(1, 0, 1, 0)
 PercentLabel.Position = UDim2.new(0, 0, 0, 0)
 PercentLabel.BackgroundTransparency = 1
@@ -449,8 +316,7 @@ PercentLabel.TextXAlignment = Enum.TextXAlignment.Center
 PercentLabel.TextYAlignment = Enum.TextYAlignment.Center
 PercentLabel.ZIndex = 4
 
--- Subscribe message
-SubscribeText.Parent = LoadingFrame
+local SubscribeText = Instance.new("TextLabel", LoadingFrame)
 SubscribeText.Size = UDim2.new(1, 0, 0, 26)
 SubscribeText.Position = UDim2.new(0, 0, 1, -30)
 SubscribeText.BackgroundTransparency = 1
@@ -475,7 +341,7 @@ task.spawn(function()
     end
 end)
 
--- Fade out and reveal UI
+-- Fade out and reveal IMPORTANT pop-up
 task.delay(9, function()
     local fadeTween = TweenService:Create(LoadingFrame, TweenInfo.new(1), {
         BackgroundTransparency = 1
