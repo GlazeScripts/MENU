@@ -191,8 +191,13 @@ GotItButton.Font = Enum.Font.GothamBold
 GotItButton.TextSize = 18
 Instance.new("UICorner", GotItButton).CornerRadius = UDim.new(0.2, 0)
 
--- Got It Button Logic
+local hasClickedGotIt = false
+
 GotItButton.MouseButton1Click:Connect(function()
+    if hasClickedGotIt then return end
+    hasClickedGotIt = true
+
+    -- Hide the IMPORTANT pop-up
     ImportantFrame.Visible = false
 
     -- Show menu
@@ -208,15 +213,48 @@ GotItButton.MouseButton1Click:Connect(function()
         BackgroundTransparency = 0.25
     }):Play()
 
-    -- Show toggle button with bounce
-    ToggleButton.Parent = ScreenGui
-    ToggleButton.Visible = true
-    ToggleButton.Size = UDim2.new(0, 0, 0, 0)
-    TweenService:Create(ToggleButton, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, 70, 0, 70),
-        BackgroundTransparency = 0,
-        TextTransparency = 0
-    }):Play()
+   -- Show toggle button with bounce (only once)
+    if not ToggleButton.Parent then
+        ToggleButton.Parent = ScreenGui
+        ToggleButton.Visible = true
+        ToggleButton.Size = UDim2.new(0, 0, 0, 0)
+        TweenService:Create(ToggleButton, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 70, 0, 70),
+            BackgroundTransparency = 0,
+            TextTransparency = 0
+        }):Play()
+    end
+
+    isOpen = true -- sync toggle state
+end)
+
+local isOpen = true -- starts open after "Got it!" is clicked
+
+ToggleButton.MouseButton1Click:Connect(function()
+    if isOpen then
+        -- Close the menu
+        TweenService:Create(scale, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+            Scale = 0
+        }):Play()
+        TweenService:Create(MainFrame, TweenInfo.new(0.25), {
+            BackgroundTransparency = 1
+        }):Play()
+        task.delay(0.25, function()
+            MainFrame.Visible = false
+        end)
+    else
+        -- Open the menu
+        MainFrame.Visible = true
+        scale.Scale = 0
+        MainFrame.BackgroundTransparency = 1
+        TweenService:Create(scale, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Scale = 1
+        }):Play()
+        TweenService:Create(MainFrame, TweenInfo.new(0.35), {
+            BackgroundTransparency = 0.25
+        }):Play()
+    end
+    isOpen = not isOpen
 end)
 
 -- Loading Screen Setup
@@ -229,7 +267,7 @@ local DimOverlay = Instance.new("Frame")
 DimOverlay.Parent = LoadingGui
 DimOverlay.Size = UDim2.new(1, 0, 1, 0)
 DimOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-DimOverlay.BackgroundTransparency = 0.4
+DimOverlay.BackgroundTransparency = 0.7
 DimOverlay.ZIndex = 0
 
 local LoadingFrame = Instance.new("Frame")
@@ -279,12 +317,11 @@ task.spawn(function()
         Color3.fromRGB(150, 150, 150),
         Color3.fromRGB(0, 0, 0)
     }
-    while true do
+    while LoadingGui and LoadingGui.Parent do
         for _, targetColor in ipairs(colors) do
-            local tween = TweenService:Create(GlazeHubText, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+            TweenService:Create(GlazeHubText, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
                 TextColor3 = targetColor
-            })
-            tween:Play()
+            }):Play()
             task.wait(0.7)
         end
     end
